@@ -30,16 +30,16 @@
       <tbody>
         <?php
         ?>
-        <tr>
         <?php
           foreach ($json_arr as $key => $value) {
             ?>
-            <td><?php echo $value; ?></td>
+            <tr>
+              <td><?php echo $value; ?></td>
+            </tr>
             <?php
           }
 
         ?>
-        </tr>
       </tbody>
     </table>
 

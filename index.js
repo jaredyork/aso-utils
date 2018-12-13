@@ -79,6 +79,8 @@ function asoRoutine() {
 
     console.log("data for '" + keywords[index] + "' gathered.");
 
+    gotoNextKeyword();
+
   }).catch(function(err) {
     console.log("ASO check failed for keyword '" + keywords[index] + "'. err=" + err + ". Skipping to next keyword.");
 
@@ -95,14 +97,5 @@ function asoRoutine() {
   console.log(new Date(), "Initial ASO routine started.");
   asoRoutine();
 
-  var rule = new cron.RecurrenceRule();
-  rule.hour = 2;
-  rule.minute = 0;
-  cron.scheduleJob(rule, function() {
-    console.log(new Date(), "ASO routine started.  Two hours has passed since the last routine.");
-
-    index = 0;
-    asoRoutine();
-  });
 
 })();
