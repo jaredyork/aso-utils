@@ -1,5 +1,6 @@
 
 const fs = require('fs');
+var cron = require('node-schedule');
 
 const gplay = require('aso')('gplay');
 const itunes = require('aso')('itunes');
@@ -32,47 +33,58 @@ var keywords = [
   "answer division"
 ];
 
+var index = 0;
+
+function gotoNextKeyword() {
+  if (index < keywords.length) {
+    index++;
+    asoRoutine();
+  }
+}
 
 function asoRoutine() {
-  gplay.scores('asteroid').then(console.log);
-  itunes.scores('asteroid').then(console.log);
 
-  for (var i = 0; i < keywords.length; i++) {
+  gplay.scores(keywords[index]).then(function(result) {
+    var outputString = JSON.stringify(result);
 
-    gplay.scores(keywords[i]).then(function(result) {
-      var outputString = "\n";
-      outputString += "RESULTS FOR '" + keywords[i] + "' on gplay.";
-      outputString += result;
-      outputString += "\n";
+    console.log("data for '" + keywords[index] + "' gathered.");
 
-      console.log(outputString);
+    fs.writeFile("/var/www/html/output.json", outputString, function(err, data) {
+      if (err) {
+        console.log("Failed to write keyword data to file. Reason: " + err);
+      }
 
-      fs.writeFile("/var/www/html/output.txt", outputString, function(err) {
-        if (err) {
-          console.log("Failed to write keyword data to file. Reason: " + err);
-          continue;
-        }
+    }).then(function( ){
+      console.log("The file was saved after adding data for keyword '" + keywords[index] + "'.");
 
-        console.log("The file was saved!");
-      });
+      gotoNextKeyword();
+    }).catch(function(err) {
+      console.log(err);
+
+      gotoNextKeyword();
     });
+  }).catch(function(err) {
+    console.log("ASO check failed. err=" + err);
 
+    gotoNextKeyword();
+  });
 
-  }
 }
 
 (function() {
 
+  index = 0;
+
   console.log(new Date(), "Initial ASO routine started.");
   asoRoutine();
 
-  var cron = require('node-schedule');
   var rule = new cron.RecurrenceRule();
   rule.hour = 2;
   rule.minute = 0;
   cron.scheduleJob(rule, function() {
     console.log(new Date(), "ASO routine started.  Two hours has passed since the last routine.");
 
+    index = 0;
     asoRoutine();
   });
 
