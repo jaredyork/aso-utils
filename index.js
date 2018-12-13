@@ -58,22 +58,18 @@ function dumpArrayOfJSONToFile() {
   }).then(function( ){
     console.log("The file was saved after adding data for keyword '" + keywords[index] + "'.");
 
-    gotoNextKeyword();
   }).catch(function(err) {
     console.log(err);
 
-    gotoNextKeyword();
   });
 
 }
 
 function asoRoutine() {
 
-  console.log("Attempting to gather data for '" + keywords[index] + "'.");
+  console.log("Attempting to gather iTunes data for '" + keywords[index] + "'.");
 
-  var gplayRequest = gplay.scores(keywords[index]);
-
-  gplayRequest.then(function(result) {
+  itunes.scores(keywords[index]).then(function(result) {
 
     data.push(result);
 
@@ -86,8 +82,6 @@ function asoRoutine() {
 
     gotoNextKeyword();
   });
-
-  return gplayRequest;
 }
 
 (function() {
