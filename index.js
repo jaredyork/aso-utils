@@ -5,7 +5,11 @@ var cron = require('node-schedule');
 const gplay = require('aso')('gplay');
 const itunes = require('aso')('itunes');
 
+var keywords = [];
 
+keywords = fs.readFileSync("dictionary.txt").toString().split('\n');
+
+/*
 var keywords = [
   "asteroid",
   "math",
@@ -31,55 +35,58 @@ var keywords = [
   "answer subtraction",
   "answer multiplication",
   "answer division"
-];
+];*/
 
-var index = 0;
-var arrData = [];
+var pathOutputITunes = "/var/www/html/output-itunes.json";
+var pathOutputGPlay = "/var/www/html/output-gplay.json";
 
-function gotoNextKeyword() {
-  if (index < keywords.length - 1) {
-    index++;
-    asoRoutine();
+var indexITunes = 0;
+var arrDataITunes = [];
+
+var indexGPlay = 0;
+var arrDataGPlay = [];
+
+// ITUNES
+function gotoNextKeywordITunes() {
+  if (indexITunes < keywords.length - 1) {
+    indexITunes++;
+    asoRoutineITunes();
   }
   else {
-    dumpArrayOfJSONToFile();
+    dumpArrayOfJSONToFileITunes();
   }
 }
 
-function dumpArrayOfJSONToFile() {
+function dumpArrayOfJSONToFileITunes() {
 
-  var outputString = JSON.stringify(arrData);
+  var outputString = JSON.stringify(arrDataITunes);
 
-  fs.exists("/var/www/html/output.json", function(exists) {
+  fs.exists(pathOutputITunes, function(exists) {
     if (exists) {
-      fs.unlink("/var/www/html/output.json", function(err) {
+      fs.unlink(pathOutputITunes, function(err) {
 
         if(err && err.code == "ENOENT") {
-          console.log("File doesn't exist, won't remove it.");
+          console.log("[iTunes] File doesn't exist, won't remove it.");
         }
         else if (err) {
-          console.error("Error occured while trying to remove file.");
+          console.error("[iTunes] Error occured while trying to remove file.");
         }
         else {
-          console.info("Removed JSON file.");
+          console.info("[iTunes] Removed JSON file.");
 
-          fs.writeFile("/var/www/html/output.json", outputString, function(err, data) {
+          fs.writeFile(pathOutputITunes, outputString, function(err, data) {
             if (err) {
-              console.log("Failed to write keyword data to file. Reason: " + err);
+              console.log("[iTunes] Failed to write keyword data to file. Reason: " + err);
             }
 
-            console.log("The file was saved after adding data for keyword '" + keywords[index] + "'.");
+            console.log("[iTunes] The file was saved after adding data for keyword '" + keywords[indexITunes] + "'.");
+            console.log("");
 
-            fs.writeFile("/var/www/html/log.txt", "Saved data array to output file.", function(err, data) {
+            fs.writeFile(pathOutputITunes, "Saved data array to output file.", function(err, data) {
               if (err) {
 
               }
             });
-        
-            // Restart loop
-            arrData.length = 0;
-            index = 0;
-            asoRoutine();
         
           });
         }
@@ -89,26 +96,12 @@ function dumpArrayOfJSONToFile() {
     }
     else {
       
-      fs.writeFile("/var/www/html/output.json", outputString, function(err, data) {
+      fs.writeFile(pathOutputITunes, outputString, function(err, data) {
         if (err) {
-          console.log("Failed to write keyword data to file. Reason: " + err);
+          console.log("[iTunes] Failed to write keyword data to file. Reason: " + err);
         }
-    
-      }).then(function(){
-        console.log("The file was saved after adding data for keyword '" + keywords[index] + "'.");
-    
-        // Restart loop
-        arrData.length = 0;
-        index = 0;
-        asoRoutine();
-    
-      }).catch(function(err) {
-        console.log(err);
-    
-        // Restart loop
-        arrData.length = 0;
-        index = 0;
-        asoRoutine();
+
+        console.log("[iTunes] The file was saved after adding data for keyword '" + keywords[indexITunes] + "'.");
     
       });
     }
@@ -116,31 +109,128 @@ function dumpArrayOfJSONToFile() {
 
 }
 
-function asoRoutine() {
+function asoRoutineITunes() {
 
-  console.log("Attempting to gather iTunes data for '" + keywords[index] + "'.");
+  console.log("[iTunes] Attempting to gather iTunes data for '" + keywords[indexITunes] + "'.");
 
-  itunes.scores(keywords[index]).then(function(result) {
+  itunes.scores(keywords[indexITunes]).then(function(result) {
 
-    arrData.push(result);
+    arrDataITunes.push(result);
 
-    console.log("data for '" + keywords[index] + "' gathered.");
+    console.log("[iTunes] data for '" + keywords[indexITunes] + "' gathered.");
 
-    gotoNextKeyword();
+    gotoNextKeywordITunes();
 
   }).catch(function(err) {
-    console.log("ASO check failed for keyword '" + keywords[index] + "'. err=" + err + ". Skipping to next keyword.");
+    console.log("[iTunes] ASO check failed for keyword '" + keywords[indexITunes] + "'. err=" + err + ". Skipping to next keyword.");
 
-    gotoNextKeyword();
+    gotoNextKeywordITunes();
+  });
+}
+
+
+// GPLAY
+function gotoNextKeywordGPlay() {
+  if (indexGPlay < keywords.length - 1) {
+    indexGPlay++;
+    asoRoutineGPlay();
+  }
+  else {
+    dumpArrayOfJSONToFileGPlay();
+  }
+}
+
+function dumpArrayOfJSONToFileGPlay() {
+
+  var outputString = JSON.stringify(arrDataGPlay);
+
+  fs.exists(pathOutputGPlay, function(exists) {
+    if (exists) {
+      fs.unlink(pathOutputGPlay, function(err) {
+
+        if(err && err.code == "ENOENT") {
+          console.log("[GPlay] File doesn't exist, won't remove it.");
+        }
+        else if (err) {
+          console.error("[GPlay] Error occured while trying to remove file.");
+        }
+        else {
+          console.info("[GPlay] Removed JSON file.");
+
+          fs.writeFile(pathOutputGPlay, outputString, function(err, data) {
+            if (err) {
+              console.log("[GPlay] Failed to write keyword data to file. Reason: " + err);
+            }
+
+            console.log("[GPlay] The file was saved after adding data for keyword '" + keywords[indexGPlay] + "'.");
+            console.log("");
+
+            fs.writeFile(pathOutputGPlay, "Saved data array to output file.", function(err, data) {
+              if (err) {
+
+              }
+            });
+        
+          });
+        }
+
+      });
+
+    }
+    else {
+      
+      fs.writeFile(pathOutputGPlay, outputString, function(err, data) {
+        if (err) {
+          console.log("[GPlay] Failed to write keyword data to file. Reason: " + err);
+        }
+
+        console.log("[GPlay] The file was saved after adding data for keyword '" + keywords[indexGPlay] + "'.");
+    
+      });
+    }
+  });
+
+}
+
+function asoRoutineGPlay() {
+
+  console.log("[GPlay] Attempting to gather GPlay data for '" + keywords[indexGPlay] + "'.");
+
+  itunes.scores(keywords[indexGPlay]).then(function(result) {
+
+    arrDataGPlay.push(result);
+
+    console.log("[GPlay] data for '" + keywords[indexGPlay] + "' gathered.");
+
+    gotoNextKeywordGPlay();
+
+  }).catch(function(err) {
+    console.log("[GPlay] ASO check failed for keyword '" + keywords[indexGPlay] + "'. err=" + err + ". Skipping to next keyword.");
+
+    gotoNextKeywordGPlay();
+  });
+}
+
+
+function init() {
+  indexITunes = 0;
+  indexGPlay = 0;
+
+  console.log(new Date(), "Initial ASO routines started.");
+  asoRoutineITunes();
+  asoRoutineGPlay();
+
+  var rule = new cron.RecurrenceRule();
+  rule.hour = 6;
+  var job = cron.scheduleJob(rule, function() {
+    console.log(new Date(), "ASO routines started.");
+    indexITunes = 0;
+    indexGPlay = 0;
+    asoRoutineITunes();
+    asoRoutineGPlay();
   });
 }
 
 (function() {
-
-  index = 0;
-
-  console.log(new Date(), "Initial ASO routine started.");
-  asoRoutine();
-
-
+  init();
 })();
