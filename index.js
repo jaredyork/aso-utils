@@ -50,6 +50,8 @@ function dumpArrayOfJSONToFile() {
 
   var outputString = JSON.stringify(data);
 
+  fs.unlinkSync("/var/www/html/output.json");
+
   fs.writeFile("/var/www/html/output.json", outputString, function(err, data) {
     if (err) {
       console.log("Failed to write keyword data to file. Reason: " + err);
@@ -58,8 +60,18 @@ function dumpArrayOfJSONToFile() {
   }).then(function( ){
     console.log("The file was saved after adding data for keyword '" + keywords[index] + "'.");
 
+    // Restart loop
+    data.length = 0;
+    index = 0;
+    asoRoutine();
+
   }).catch(function(err) {
     console.log(err);
+
+    // Restart loop
+    data.length = 0;
+    index = 0;
+    asoRoutine();
 
   });
 

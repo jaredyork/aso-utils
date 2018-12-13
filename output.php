@@ -11,7 +11,10 @@
     $result_str = file_get_contents("../output.json");
     $json_arr = json_decode($return_str, true);
 
+    echo "Results found: " . count($json_arr);
+
     ?>
+    <br />
     <table>
       <thead>
         <tr>
@@ -22,14 +25,12 @@
           <td>score</td>
           <td>age</td>
           <td>traffic</td>
-          <td>insdtalls</td>
+          <td>installs</td>
           <td>length</td>
         </tr>
       </thead>
 
       <tbody>
-        <?php
-        ?>
         <?php
           foreach ($json_arr as $key => $value) {
             ?>
