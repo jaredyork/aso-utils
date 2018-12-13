@@ -34,7 +34,7 @@ var keywords = [
 ];
 
 var index = 0;
-var data = [];
+var arrData = [];
 
 function gotoNextKeyword() {
   if (index < keywords.length - 1) {
@@ -77,7 +77,7 @@ function dumpArrayOfJSONToFile() {
             });
         
             // Restart loop
-            data.length = 0;
+            arrData.length = 0;
             index = 0;
             asoRoutine();
         
@@ -98,7 +98,7 @@ function dumpArrayOfJSONToFile() {
         console.log("The file was saved after adding data for keyword '" + keywords[index] + "'.");
     
         // Restart loop
-        data.length = 0;
+        arrData.length = 0;
         index = 0;
         asoRoutine();
     
@@ -106,7 +106,7 @@ function dumpArrayOfJSONToFile() {
         console.log(err);
     
         // Restart loop
-        data.length = 0;
+        arrData.length = 0;
         index = 0;
         asoRoutine();
     
@@ -122,7 +122,7 @@ function asoRoutine() {
 
   itunes.scores(keywords[index]).then(function(result) {
 
-    data.push(result);
+    arrData.push(result);
 
     console.log("data for '" + keywords[index] + "' gathered.");
 
