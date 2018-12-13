@@ -67,8 +67,7 @@ function dumpArrayOfJSONToFile() {
             if (err) {
               console.log("Failed to write keyword data to file. Reason: " + err);
             }
-        
-          }).then(function(){
+
             console.log("The file was saved after adding data for keyword '" + keywords[index] + "'.");
 
             fs.writeFile("/var/www/html/log.txt", "Saved data array to output file.", function(err, data) {
