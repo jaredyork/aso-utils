@@ -34,41 +34,58 @@ var keywords = [
 ];
 
 var index = 0;
+var data = [];
 
 function gotoNextKeyword() {
   if (index < keywords.length) {
     index++;
     asoRoutine();
   }
+  else {
+    dumpArrayOfJSONToFile();
+  }
 }
 
-function asoRoutine() {
+function dumpArrayOfJSONToFile() {
 
-  gplay.scores(keywords[index]).then(function(result) {
-    var outputString = JSON.stringify(result);
+  var outputString = JSON.stringify(data);
 
-    console.log("data for '" + keywords[index] + "' gathered.");
+  fs.writeFile("/var/www/html/output.json", outputString, function(err, data) {
+    if (err) {
+      console.log("Failed to write keyword data to file. Reason: " + err);
+    }
 
-    fs.writeFile("/var/www/html/output.json", outputString, function(err, data) {
-      if (err) {
-        console.log("Failed to write keyword data to file. Reason: " + err);
-      }
+  }).then(function( ){
+    console.log("The file was saved after adding data for keyword '" + keywords[index] + "'.");
 
-    }).then(function( ){
-      console.log("The file was saved after adding data for keyword '" + keywords[index] + "'.");
-
-      gotoNextKeyword();
-    }).catch(function(err) {
-      console.log(err);
-
-      gotoNextKeyword();
-    });
+    gotoNextKeyword();
   }).catch(function(err) {
-    console.log("ASO check failed. err=" + err);
+    console.log(err);
 
     gotoNextKeyword();
   });
 
+}
+
+function asoRoutine() {
+
+  console.log("Attempting to gather data for '" + keywords[index] + "'.");
+
+  var gplayRequest = gplay.scores(keywords[index]);
+
+  gplayRequest.then(function(result) {
+
+    data.push(result);
+
+    console.log("data for '" + keywords[index] + "' gathered.");
+
+  }).catch(function(err) {
+    console.log("ASO check failed for keyword '" + keywords[index] + "'. err=" + err + ". Skipping to next keyword.");
+
+    gotoNextKeyword();
+  });
+
+  return gplayRequest;
 }
 
 (function() {
