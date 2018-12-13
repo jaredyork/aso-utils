@@ -39,6 +39,7 @@ var keywords = [
 
 var pathOutputITunes = "/var/www/html/output-itunes.json";
 var pathOutputGPlay = "/var/www/html/output-gplay.json";
+var pathLogFile = "/var/www/html/log.txt";
 
 var indexITunes = 0;
 var arrDataITunes = [];
@@ -49,6 +50,15 @@ var arrDataGPlay = [];
 // ITUNES
 function gotoNextKeywordITunes() {
   if (indexITunes < keywords.length - 1) {
+
+    if (indexITunes % 50 == 0) {
+      fs.writeFile(pathLogFile, "[iTunes] Finished 50 more. Amount finished = " + arrDataITunes.length, function(err, data) {
+        if (err) {
+
+        }
+      });
+    }
+
     indexITunes++;
     asoRoutineITunes();
   }
@@ -82,7 +92,7 @@ function dumpArrayOfJSONToFileITunes() {
             console.log("[iTunes] The file was saved after adding data for keyword '" + keywords[indexITunes] + "'.");
             console.log("");
 
-            fs.writeFile(pathOutputITunes, "Saved data array to output file.", function(err, data) {
+            fs.writeFile(pathLogFile, "[iTunes] Saved data array to output file.", function(err, data) {
               if (err) {
 
               }
@@ -132,6 +142,15 @@ function asoRoutineITunes() {
 // GPLAY
 function gotoNextKeywordGPlay() {
   if (indexGPlay < keywords.length - 1) {
+
+    if (indexGPlay % 50 == 0) {
+      fs.writeFile(pathLogFile, "[GPlay] Finished 50 more. Amount finished = " + arrDataGPlay.length, function(err, data) {
+        if (err) {
+
+        }
+      });
+    }
+
     indexGPlay++;
     asoRoutineGPlay();
   }
@@ -165,7 +184,7 @@ function dumpArrayOfJSONToFileGPlay() {
             console.log("[GPlay] The file was saved after adding data for keyword '" + keywords[indexGPlay] + "'.");
             console.log("");
 
-            fs.writeFile(pathOutputGPlay, "Saved data array to output file.", function(err, data) {
+            fs.writeFile(pathLogFile, "[GPlay] Saved data array to output file.", function(err, data) {
               if (err) {
 
               }
