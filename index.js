@@ -70,6 +70,16 @@ function dumpArrayOfJSONToFile() {
         
           }).then(function(){
             console.log("The file was saved after adding data for keyword '" + keywords[index] + "'.");
+
+            fs.writeFile("/var/www/html/log.txt", "Saved data array to output file.", function(err, data) {
+              if (err) {
+
+              }
+            }).then(function() {
+
+            }).catch(function(err) {
+
+            });
         
             // Restart loop
             data.length = 0;
@@ -78,6 +88,16 @@ function dumpArrayOfJSONToFile() {
         
           }).catch(function(err) {
             console.log(err);
+
+            fs.writeFile("/var/www/html/log.txt", "Failed to write data to output JSON. Error: " + err, function(err, data) {
+              if (err) {
+
+              }
+            }).then(function() {
+
+            }).catch(function(err) {
+
+            });
         
             // Restart loop
             data.length = 0;
@@ -89,6 +109,31 @@ function dumpArrayOfJSONToFile() {
 
       });
 
+    }
+    else {
+      
+      fs.writeFile("/var/www/html/output.json", outputString, function(err, data) {
+        if (err) {
+          console.log("Failed to write keyword data to file. Reason: " + err);
+        }
+    
+      }).then(function(){
+        console.log("The file was saved after adding data for keyword '" + keywords[index] + "'.");
+    
+        // Restart loop
+        data.length = 0;
+        index = 0;
+        asoRoutine();
+    
+      }).catch(function(err) {
+        console.log(err);
+    
+        // Restart loop
+        data.length = 0;
+        index = 0;
+        asoRoutine();
+    
+      });
     }
   });
 
