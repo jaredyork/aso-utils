@@ -50,29 +50,46 @@ function dumpArrayOfJSONToFile() {
 
   var outputString = JSON.stringify(data);
 
-  fs.unlinkSync("/var/www/html/output.json");
+  fs.exists("/var/www/html/output.json", function(exists) {
+    if (exists) {
+      fs.unlink("/var/www/html/output.json", function(err) {
 
-  fs.writeFile("/var/www/html/output.json", outputString, function(err, data) {
-    if (err) {
-      console.log("Failed to write keyword data to file. Reason: " + err);
+        if(err && err.code == "ENOENT") {
+          console.log("File doesn't exist, won't remove it.");
+        }
+        else if (err) {
+          console.error("Error occured while trying to remove file.");
+        }
+        else {
+          console.info("Removed JSON file.");
+
+          fs.writeFile("/var/www/html/output.json", outputString, function(err, data) {
+            if (err) {
+              console.log("Failed to write keyword data to file. Reason: " + err);
+            }
+        
+          }).then(function(){
+            console.log("The file was saved after adding data for keyword '" + keywords[index] + "'.");
+        
+            // Restart loop
+            data.length = 0;
+            index = 0;
+            asoRoutine();
+        
+          }).catch(function(err) {
+            console.log(err);
+        
+            // Restart loop
+            data.length = 0;
+            index = 0;
+            asoRoutine();
+        
+          });
+        }
+
+      });
+
     }
-
-  }).then(function( ){
-    console.log("The file was saved after adding data for keyword '" + keywords[index] + "'.");
-
-    // Restart loop
-    data.length = 0;
-    index = 0;
-    asoRoutine();
-
-  }).catch(function(err) {
-    console.log(err);
-
-    // Restart loop
-    data.length = 0;
-    index = 0;
-    asoRoutine();
-
   });
 
 }
