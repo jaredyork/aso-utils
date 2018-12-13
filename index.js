@@ -74,28 +74,6 @@ function dumpArrayOfJSONToFile() {
               if (err) {
 
               }
-            }).then(function() {
-
-            }).catch(function(err) {
-
-            });
-        
-            // Restart loop
-            data.length = 0;
-            index = 0;
-            asoRoutine();
-        
-          }).catch(function(err) {
-            console.log(err);
-
-            fs.writeFile("/var/www/html/log.txt", "Failed to write data to output JSON. Error: " + err, function(err, data) {
-              if (err) {
-
-              }
-            }).then(function() {
-
-            }).catch(function(err) {
-
             });
         
             // Restart loop
