@@ -37,7 +37,7 @@ var index = 0;
 var data = [];
 
 function gotoNextKeyword() {
-  if (index < keywords.length) {
+  if (index < keywords.length - 1) {
     index++;
     asoRoutine();
   }
