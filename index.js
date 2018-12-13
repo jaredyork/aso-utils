@@ -48,7 +48,7 @@ function gotoNextKeyword() {
 
 function dumpArrayOfJSONToFile() {
 
-  var outputString = JSON.stringify(data);
+  var outputString = JSON.stringify(arrData);
 
   fs.exists("/var/www/html/output.json", function(exists) {
     if (exists) {
