@@ -54,7 +54,7 @@ function gotoNextKeywordITunes() {
   if (indexITunes < keywords.length - 1) {
 
     if (indexITunes % 50 == 0) {
-      fs.writeFile(pathLogFile, "[iTunes] Finished 50 more. Amount finished = " + arrDataITunes.length, function(err, data) {
+      fs.writeFile(pathLogFile, "[iTunes] Finished 50 more. Amount finished=" + arrDataITunes.length + " - index=" + indexITunes, function(err, data) {
         if (err) {
 
         }
@@ -162,7 +162,7 @@ function gotoNextKeywordGPlay() {
   if (indexGPlay < keywords.length - 1) {
 
     if (indexGPlay % 50 == 0) {
-      fs.writeFile(pathLogFile, "[GPlay] Finished 50 more. Amount finished = " + arrDataGPlay.length, function(err, data) {
+      fs.writeFile(pathLogFile, "[GPlay] Finished 50 more. Amount finished=" + arrDataGPlay.length + " - index=" + indexGPlay, function(err, data) {
         if (err) {
 
         }
@@ -179,7 +179,7 @@ function gotoNextKeywordGPlay() {
   }
 }
 
-function dumpArrayOfJSONToFileGPlay() {
+function dumpArrayOfJSONToFileGPlay(dumpToArchive) {
 
   var outputString = JSON.stringify(arrDataGPlay);
 
