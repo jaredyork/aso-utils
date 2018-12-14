@@ -97,12 +97,6 @@ function dumpArrayOfJSONToFileITunes(dumpToArchive) {
             console.log("");
         
           });
-
-          fs.writeFile(pathLogFile, "[iTunes] Saved data array to output file.", function(err, data) {
-            if (err) {
-
-            }
-          });
         }
 
       });
@@ -145,6 +139,7 @@ function asoRoutineITunes() {
 
   itunes.scores(keywords[indexITunes]).then(function(result) {
 
+    result.keyword = keywords[indexITunes];
     arrDataITunes.push(result);
 
     console.log("[iTunes] data for '" + keywords[indexITunes] + "' gathered.");
@@ -207,12 +202,6 @@ function dumpArrayOfJSONToFileGPlay(dumpToArchive) {
             console.log("");
         
           });
-
-          fs.writeFile(pathLogFile, "[GPlay] Saved data array to output file.", function(err, data) {
-            if (err) {
-
-            }
-          });
         }
 
       });
@@ -257,6 +246,7 @@ function asoRoutineGPlay() {
 
   gplay.scores(keywords[indexGPlay]).then(function(result) {
 
+    result.keyword = keywords[indexGPlay];
     arrDataGPlay.push(result);
 
     //console.log("[GPlay] data for '" + keywords[indexGPlay] + "' gathered.");
