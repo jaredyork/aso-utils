@@ -1,5 +1,5 @@
-
-const fs = require('fs');
+var async = require('async');
+var fs = require('fs');
 var cron = require('node-schedule');
 
 const gplay = require('aso')('gplay');
@@ -53,7 +53,7 @@ var arrDataGPlay = [];
 function gotoNextKeywordITunes() {
   if (indexITunes < keywords.length - 1) {
 
-    if (indexITunes % 1000 == 0) {
+    if (indexITunes % 10 == 0) {
       dumpArrayOfJSONToFileITunes(false);
     }
 
@@ -69,44 +69,14 @@ function dumpArrayOfJSONToFileITunes(dumpToArchive) {
 
   var outputString = JSON.stringify(arrDataITunes);
 
-  fs.exists(pathOutputITunes, function(exists) {
-    if (exists) {
-      fs.unlink(pathOutputITunes, function(err) {
-
-        if(err && err.code == "ENOENT") {
-          console.log("[iTunes] File doesn't exist, won't remove it.");
-        }
-        else if (err) {
-          console.error("[iTunes] Error occured while trying to remove file.");
-        }
-        else {
-          console.info("[iTunes] Removed JSON file.");
-
-          fs.writeFile(pathOutputITunes, outputString, function(err, data) {
-            if (err) {
-              console.log("[iTunes] Failed to write keyword data to file. Reason: " + err);
-            }
-
-            console.log("[iTunes] The file was saved after adding data for keyword '" + keywords[indexITunes] + "'.");
-            console.log("");
-        
-          });
-        }
-
-      });
-
+  fs.writeFile(pathOutputITunes, outputString, function(err, data) {
+    if (err) {
+      console.log("[iTunes] Failed to write keyword data to file. Reason: " + err);
     }
-    else {
-      
-      fs.writeFile(pathOutputITunes, outputString, function(err, data) {
-        if (err) {
-          console.log("[iTunes] Failed to write keyword data to file. Reason: " + err);
-        }
 
-        console.log("[iTunes] The file was saved after adding data for keyword '" + keywords[indexITunes] + "'.");
-    
-      });
-    }
+    console.log("[iTunes] The file was saved after adding data for keyword '" + keywords[indexITunes] + "'.");
+    console.log("");
+
   });
 
   if (dumpToArchive) {
@@ -152,7 +122,7 @@ function asoRoutineITunes() {
 function gotoNextKeywordGPlay() {
   if (indexGPlay < keywords.length - 1) {
 
-    if (indexGPlay % 1000 == 0) {
+    if (indexGPlay % 10 == 0) {
       dumpArrayOfJSONToFileGPlay(false);
     }
 
@@ -168,44 +138,14 @@ function dumpArrayOfJSONToFileGPlay(dumpToArchive) {
 
   var outputString = JSON.stringify(arrDataGPlay);
 
-  fs.exists(pathOutputGPlay, function(exists) {
-    if (exists) {
-      fs.unlink(pathOutputGPlay, function(err) {
-
-        if(err && err.code == "ENOENT") {
-          console.log("[GPlay] File doesn't exist, won't remove it.");
-        }
-        else if (err) {
-          console.error("[GPlay] Error occured while trying to remove file.");
-        }
-        else {
-          console.info("[GPlay] Removed JSON file.");
-
-          fs.writeFile(pathOutputGPlay, outputString, function(err, data) {
-            if (err) {
-              console.log("[GPlay] Failed to write keyword data to file. Reason: " + err);
-            }
-
-            console.log("[GPlay] The file was saved after adding data for keyword '" + keywords[indexGPlay] + "'.");
-            console.log("");
-        
-          });
-        }
-
-      });
-
+  fs.writeFile(pathOutputGPlay, outputString, function(err, data) {
+    if (err) {
+      console.log("[GPlay] Failed to write keyword data to file. Reason: " + err);
     }
-    else {
-      
-      fs.writeFile(pathOutputGPlay, outputString, function(err, data) {
-        if (err) {
-          console.log("[GPlay] Failed to write keyword data to file. Reason: " + err);
-        }
 
-        console.log("[GPlay] The file was saved after adding data for keyword '" + keywords[indexGPlay] + "'.");
-    
-      });
-    }
+    console.log("[GPlay] The file was saved after adding data for keyword '" + keywords[indexGPlay] + "'.");
+    console.log("");
+
   });
 
   if (dumpToArchive) {
@@ -279,7 +219,7 @@ function init() {
   var rule = new cron.RecurrenceRule();
   rule.hour = 24;
   var job = cron.scheduleJob(rule, function() {
-
+    runAllAsoRoutinesInParallel();
   });
 }
 
