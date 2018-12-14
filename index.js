@@ -264,6 +264,8 @@ function asoRoutineGPlay() {
 function init() {
   indexITunes = 0;
   indexGPlay = 0;
+  arrDataITunes.length = 0;
+  arrDataGPlay.length = 0;
 
   console.log(new Date(), "Initial ASO routines started.");
   asoRoutineITunes();
