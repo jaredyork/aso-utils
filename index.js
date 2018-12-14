@@ -95,14 +95,12 @@ function dumpArrayOfJSONToFileITunes(dumpToArchive) {
 
             console.log("[iTunes] The file was saved after adding data for keyword '" + keywords[indexITunes] + "'.");
             console.log("");
-
-            fs.writeFile(pathLogFile, "[iTunes] Saved data array to output file.", function(err, data) {
-              if (err) {
-
-              }
-            });
         
-          });
+          }).then(fs.writeFile(pathLogFile, "[iTunes] Saved data array to output file.", function(err, data) {
+            if (err) {
+
+            }
+          }));
         }
 
       });
