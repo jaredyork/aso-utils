@@ -53,14 +53,8 @@ var arrDataGPlay = [];
 function gotoNextKeywordITunes() {
   if (indexITunes < keywords.length - 1) {
 
-    if (indexITunes % 50 == 0) {
-      fs.writeFile(pathLogFile, "[iTunes] Finished 50 more. Amount finished=" + arrDataITunes.length + " - index=" + indexITunes, function(err, data) {
-        if (err) {
-
-        }
-
-        dumpArrayOfJSONToFileITunes(false);
-      });
+    if (indexITunes % 1000 == 0) {
+      dumpArrayOfJSONToFileITunes(false);
     }
 
     indexITunes++;
@@ -158,14 +152,8 @@ function asoRoutineITunes() {
 function gotoNextKeywordGPlay() {
   if (indexGPlay < keywords.length - 1) {
 
-    if (indexGPlay % 50 == 0) {
-      fs.writeFile(pathLogFile, "[GPlay] Finished 50 more. Amount finished=" + arrDataGPlay.length + " - index=" + indexGPlay, function(err, data) {
-        if (err) {
-
-        }
-
-        dumpArrayOfJSONToFileGPlay(false);
-      });
+    if (indexGPlay % 1000 == 0) {
+      dumpArrayOfJSONToFileGPlay(false);
     }
 
     indexGPlay++;
@@ -260,6 +248,25 @@ function asoRoutineGPlay() {
   });
 }
 
+function runAllAsoRoutinesInParallel() {
+
+  console.log(new Date(), "ASO routines started.");
+  indexITunes = 0;
+  indexGPlay = 0;
+  arrDataITunes.length = 0;
+  arrDataGPlay.length = 0;
+
+  async.parallel([
+    asoRoutineITunes(),
+    asoRoutineGPlay()
+  ], function(err, results) {
+    if (err) {
+      console.error("An error occurred while attempting to run app in parallel: " + err);
+    }
+
+    console.log("The ASO routines have completed successfully.");
+  });
+}
 
 function init() {
   indexITunes = 0;
@@ -267,20 +274,12 @@ function init() {
   arrDataITunes.length = 0;
   arrDataGPlay.length = 0;
 
-  console.log(new Date(), "Initial ASO routines started.");
-  asoRoutineITunes();
-  asoRoutineGPlay();
+  runAllAsoRoutinesInParallel();
 
   var rule = new cron.RecurrenceRule();
   rule.hour = 24;
   var job = cron.scheduleJob(rule, function() {
-    console.log(new Date(), "ASO routines started.");
-    indexITunes = 0;
-    indexGPlay = 0;
-    arrDataITunes.length = 0;
-    arrDataGPlay.length = 0;
-    asoRoutineITunes();
-    asoRoutineGPlay();
+
   });
 }
 
