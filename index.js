@@ -37,6 +37,8 @@ var keywords = [
   "answer division"
 ];*/
 
+var pathOutputITunes = "/var/www/html/archive-itunes.json";
+var pathOutputGPlay = "/var/www/html/archive-gplay.json";
 var pathOutputITunes = "/var/www/html/output-itunes.json";
 var pathOutputGPlay = "/var/www/html/output-gplay.json";
 var pathLogFile = "/var/www/html/log.txt";
@@ -56,6 +58,8 @@ function gotoNextKeywordITunes() {
         if (err) {
 
         }
+
+        dumpArrayOfJSONToFileITunes(false);
       });
     }
 
@@ -63,11 +67,11 @@ function gotoNextKeywordITunes() {
     asoRoutineITunes();
   }
   else {
-    dumpArrayOfJSONToFileITunes();
+    dumpArrayOfJSONToFileITunes(true);
   }
 }
 
-function dumpArrayOfJSONToFileITunes() {
+function dumpArrayOfJSONToFileITunes(dumpToArchive) {
 
   var outputString = JSON.stringify(arrDataITunes);
 
@@ -117,6 +121,22 @@ function dumpArrayOfJSONToFileITunes() {
     }
   });
 
+  if (dumpToArchive) {
+    fs.writeFile(pathOutputITunesArchive, outputString, function(err, data) {
+      if (err) {
+        console.log("[iTunes] Failed to write keyword data to archive. Reason: " + err);
+      }
+
+      fs.writeFile(pathLogFile, "[iTunes] Saved data array to output archive.", function(err, data) {
+        if (err) {
+
+        }
+      });
+  
+    });
+  }
+
+
 }
 
 function asoRoutineITunes() {
@@ -148,6 +168,8 @@ function gotoNextKeywordGPlay() {
         if (err) {
 
         }
+
+        dumpArrayOfJSONToFileGPlay(false);
       });
     }
 
@@ -155,7 +177,7 @@ function gotoNextKeywordGPlay() {
     asoRoutineGPlay();
   }
   else {
-    dumpArrayOfJSONToFileGPlay();
+    dumpArrayOfJSONToFileGPlay(true);
   }
 }
 
@@ -209,22 +231,40 @@ function dumpArrayOfJSONToFileGPlay() {
     }
   });
 
+  if (dumpToArchive) {
+    fs.writeFile(pathOutputGPlayArchive, outputString, function(err, data) {
+      if (err) {
+        console.log("[GPlay] Failed to write keyword data to archive. Reason: " + err);
+      }
+
+      console.log("[GPlay] The archive was saved after adding data for keyword '" + keywords[indexGPlay] + "'.");
+      console.log("");
+
+      fs.writeFile(pathLogFile, "[GPlay] Saved data array to output archive.", function(err, data) {
+        if (err) {
+
+        }
+      });
+
+    });
+  }
+
 }
 
 function asoRoutineGPlay() {
 
-  console.log("[GPlay] Attempting to gather GPlay data for '" + keywords[indexGPlay] + "'.");
+  //console.log("[GPlay] Attempting to gather GPlay data for '" + keywords[indexGPlay] + "'.");
 
   itunes.scores(keywords[indexGPlay]).then(function(result) {
 
     arrDataGPlay.push(result);
 
-    console.log("[GPlay] data for '" + keywords[indexGPlay] + "' gathered.");
+    //console.log("[GPlay] data for '" + keywords[indexGPlay] + "' gathered.");
 
     gotoNextKeywordGPlay();
 
   }).catch(function(err) {
-    console.log("[GPlay] ASO check failed for keyword '" + keywords[indexGPlay] + "'. err=" + err + ". Skipping to next keyword.");
+    //console.log("[GPlay] ASO check failed for keyword '" + keywords[indexGPlay] + "'. err=" + err + ". Skipping to next keyword.");
 
     gotoNextKeywordGPlay();
   });
@@ -240,11 +280,13 @@ function init() {
   asoRoutineGPlay();
 
   var rule = new cron.RecurrenceRule();
-  rule.hour = 6;
+  rule.hour = 24;
   var job = cron.scheduleJob(rule, function() {
     console.log(new Date(), "ASO routines started.");
     indexITunes = 0;
     indexGPlay = 0;
+    arrDataITunes.length = 0;
+    arrDataGPlay.length = 0;
     asoRoutineITunes();
     asoRoutineGPlay();
   });
