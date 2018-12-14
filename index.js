@@ -253,7 +253,7 @@ function asoRoutineGPlay() {
 
   //console.log("[GPlay] Attempting to gather GPlay data for '" + keywords[indexGPlay] + "'.");
 
-  itunes.scores(keywords[indexGPlay]).then(function(result) {
+  gplay.scores(keywords[indexGPlay]).then(function(result) {
 
     arrDataGPlay.push(result);
 
