@@ -96,11 +96,13 @@ function dumpArrayOfJSONToFileITunes(dumpToArchive) {
             console.log("[iTunes] The file was saved after adding data for keyword '" + keywords[indexITunes] + "'.");
             console.log("");
         
-          }).then(fs.writeFile(pathLogFile, "[iTunes] Saved data array to output file.", function(err, data) {
+          });
+
+          fs.writeFile(pathLogFile, "[iTunes] Saved data array to output file.", function(err, data) {
             if (err) {
 
             }
-          }));
+          });
         }
 
       });
@@ -203,13 +205,13 @@ function dumpArrayOfJSONToFileGPlay(dumpToArchive) {
 
             console.log("[GPlay] The file was saved after adding data for keyword '" + keywords[indexGPlay] + "'.");
             console.log("");
-
-            fs.writeFile(pathLogFile, "[GPlay] Saved data array to output file.", function(err, data) {
-              if (err) {
-
-              }
-            });
         
+          });
+
+          fs.writeFile(pathLogFile, "[GPlay] Saved data array to output file.", function(err, data) {
+            if (err) {
+
+            }
           });
         }
 
