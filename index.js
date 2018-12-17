@@ -217,7 +217,7 @@ function init() {
   runAllAsoRoutinesInParallel();
 
   var rule = new cron.RecurrenceRule();
-  rule.hour = 24;
+  rule.hour = 24 * 7;
   var job = cron.scheduleJob(rule, function() {
     runAllAsoRoutinesInParallel();
   });
